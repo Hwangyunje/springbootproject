@@ -21,15 +21,16 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer configure() {
-        return (web) ->web.ignoring()
+        return (web) -> web.ignoring()
                 .requestMatchers(toH2Console())
                 .requestMatchers("/static/**");
     }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests()
-                .requestMatchers("/login","/signup","/user").permitAll()
+                .requestMatchers("/login", "/signup", "/user").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -43,13 +44,18 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .build();
     }
+
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailService userDetailService) throws Exception{
-        return http.getSharedObject(AuthenticationManagerBuilder,class)
-        .userDetailService(userService)
+    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailService userDetailService) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userService)
                 .passwordEncoder(bCryptPasswordEncoder)
                 .and()
                 .build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
